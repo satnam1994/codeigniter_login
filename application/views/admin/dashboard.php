@@ -21,7 +21,8 @@
             <thead>
               <tr>
                 <th style="width:10%">ID</th>
-                <th style="width:70%">TITLE</th>
+                <th style="width:20%">IMAGE</th>
+                <th style="width:50%">TITLE</th>
                 <th style="width:20%">ACTION</th>
               </tr>
             </thead>
@@ -31,6 +32,7 @@
                  foreach ($articles as $article) { ?>
                   <tr>
                     <td><?= ++$count; ?></td>
+					<td><img src="<?php echo $article['article_img']; ?>" height="120px" width="120px" /></td>
                     <td><?= anchor("user/article/{$article['id']}", $article['title']); ?></td>
                     <td>
                       <div class="row">

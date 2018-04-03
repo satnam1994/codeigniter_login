@@ -9,7 +9,7 @@ class Articlesmodel extends CI_Model
     $user_id = $this->session->get_userdata('user_id');
 
     $query = $this->db
-                        ->select('id, title')
+                        ->select('id, title, article_img')
                         ->from('articles')
                         ->where('user_id', $user_id['id'])
                         ->limit($limit, $offset)
@@ -69,7 +69,7 @@ class Articlesmodel extends CI_Model
 
   function find_article( $article_id, $user_id )
   {
-    $query = $this->db->select('id, title, body')
+    $query = $this->db->select('id, title, body, article_img')
                       ->where(['id' => $article_id, 'user_id' => $user_id])
                       ->get('articles');
 

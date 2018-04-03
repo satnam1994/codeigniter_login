@@ -51,7 +51,7 @@ $config = [
                                               "label" => "Confirm Password",
                                               "rules" => "required|trim|required|matches[password]",
                                             ]
-                                  ],					  
+                                  ]							  
 ];
 
 ?>

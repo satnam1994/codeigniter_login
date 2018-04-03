@@ -56,18 +56,46 @@ class Admin extends MY_Controller{
 			$this->form_validation->set_error_delimiters('<div class="text-danger" style = "margin-top:10px;">', '</div>');
 
 			if( $this->form_validation->run('add_article_rules') ){
-
+				
+				
 				$post = $this->input->post();
+				
+				$config['upload_path']          = 'uploads/';
+				
+                $config['allowed_types']        = 'gif|jpg|jpeg|png';
+				
+                $this->load->library('upload', $config);
+                
+				if ( ! $this->upload->do_upload('userfile'))
+                {
+                    $upload_file_error = $this->upload->display_errors();
+					
+				    return $this->load->view('admin/add_article', compact('upload_file_error'));
+					           
+                }
+                else
+                {
+                    $data = $this->upload->data();
 
-				return $this->_flashAndRedirect(
+                    /* echo '<pre>';				
+					print_r($data);
+					echo '</pre>'; */
+					
+					$post['article_img'] = base_url("uploads/".$data['raw_name'].$data['file_ext']);
 
-					$this->articles->add_article( $post ),
+					return $this->_flashAndRedirect(
 
-					'Article Added Successfully.',
+						$this->articles->add_article( $post ),
 
-					'Article Failed To Add, Please Try Again.'
-				);
+						'Article Added Successfully.',
 
+						'Article Failed To Add, Please Try Again.'
+					);
+
+					
+                }
+				
+				
 			}else {
 				return $this->load->view('admin/add_article');
 			}
@@ -86,17 +114,53 @@ class Admin extends MY_Controller{
 			$this->form_validation->set_error_delimiters('<div class="text-danger" style = "margin-top:10px;">', '</div>');
 
 			if( $this->form_validation->run('add_article_rules') ){
-
+				
+				
 				$post = $this->input->post();
+				
+				$config['upload_path']          = 'uploads/';
+				
+                $config['allowed_types']        = 'gif|jpg|jpeg|png';
+				
+                $this->load->library('upload', $config);
+                
+				if ( ! $this->upload->do_upload('userfile'))
+                {
+                    $upload_file_error = $this->upload->display_errors();
+					
+					return $this->_flashAndRedirect($failureMessage, $upload_file_error, $upload_file_error);
+					        
+                }
+                else
+                {
+                    $data = $this->upload->data();
 
-				return $this->_flashAndRedirect(
+                    /* echo '<pre>';				
+					print_r($data);
+					echo '</pre>'; */
+					
+					$article = $this->articles->find_article( $id, $this->session->userdata('id') );
+					
+					$path = $article->article_img;
+					
+					$image_path = str_replace(base_url(),'', $path);
+					
+					unlink($image_path);
+                              
+					$post['article_img'] = base_url("uploads/".$data['raw_name'].$data['file_ext']);
 
-					$this->articles->update_article( $id, $post, $this->session->userdata('id')),
+					return $this->_flashAndRedirect(
 
-					'Article Updated Successfully.',
+						$this->articles->update_article( $id, $post, $this->session->userdata('id')),
 
-					'Article Failed To Update, Please Try Again.'
-				);
+						'Article Updated Successfully.',
+
+						'Article Failed To Update, Please Try Again.'
+					);
+					
+                }
+				
+				
 
 			}else {
 				return $this->load->view('admin/add_article');
@@ -121,6 +185,14 @@ class Admin extends MY_Controller{
 	function delete_article(){
 
 		if ( $article_id = $this->input->post('article_id') ) {
+			
+			$article = $this->articles->find_article( $article_id, $this->session->userdata('id') );
+			
+			$path = $article->article_img;
+					
+			$image_path = str_replace(base_url(),'', $path);
+					
+			unlink($image_path);
 
 			return $this->_flashAndRedirect(
 
